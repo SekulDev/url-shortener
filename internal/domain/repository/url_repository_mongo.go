@@ -5,13 +5,13 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
-	"url-shortener/internal/domain/entities"
+	"url-shortener/internal/domain/entity"
 )
 
 type UrlRepository interface {
-	Create(url *entities.Url) (primitive.ObjectID, error)
-	GetByID(id string) (*entities.Url, error)
-	GetByShortUrl(url string) (*entities.Url, error)
+	Create(url *entity.Url) (primitive.ObjectID, error)
+	GetByID(id string) (*entity.Url, error)
+	GetByShortUrl(url string) (*entity.Url, error)
 }
 
 type MongoUrlRepository struct {
@@ -24,7 +24,7 @@ func NewMongoUrlRepository(db *mongo.Database) *MongoUrlRepository {
 	}
 }
 
-func (m *MongoUrlRepository) Create(url *entities.Url) (primitive.ObjectID, error) {
+func (m *MongoUrlRepository) Create(url *entity.Url) (primitive.ObjectID, error) {
 	result, err := m.collection.InsertOne(context.TODO(), url)
 	if err != nil {
 		return primitive.NilObjectID, err
@@ -33,7 +33,7 @@ func (m *MongoUrlRepository) Create(url *entities.Url) (primitive.ObjectID, erro
 	return result.InsertedID.(primitive.ObjectID), nil
 }
 
-func (m *MongoUrlRepository) GetByID(id string) (*entities.Url, error) {
+func (m *MongoUrlRepository) GetByID(id string) (*entity.Url, error) {
 	idd, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
 		panic(err)
@@ -41,7 +41,7 @@ func (m *MongoUrlRepository) GetByID(id string) (*entities.Url, error) {
 
 	filter := bson.D{{"_id", idd}}
 
-	var result entities.Url
+	var result entity.Url
 	err = m.collection.FindOne(context.TODO(), filter).Decode(&result)
 	if err != nil {
 		return nil, err
@@ -50,10 +50,10 @@ func (m *MongoUrlRepository) GetByID(id string) (*entities.Url, error) {
 	return &result, nil
 }
 
-func (m *MongoUrlRepository) GetByShortUrl(url string) (*entities.Url, error) {
+func (m *MongoUrlRepository) GetByShortUrl(url string) (*entity.Url, error) {
 	filter := bson.D{{"shortid", url}}
 
-	var result entities.Url
+	var result entity.Url
 	err := m.collection.FindOne(context.TODO(), filter).Decode(&result)
 	if err != nil {
 		return nil, err

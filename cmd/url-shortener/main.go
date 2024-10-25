@@ -3,8 +3,9 @@ package main
 import (
 	"fmt"
 	"log"
+	"net/http"
 	"os"
-	"url-shortener/internal/domain/repository"
+	"url-shortener/internal/adapters"
 	"url-shortener/internal/infrastructure/database/mongo"
 	"url-shortener/internal/infrastructure/hashing"
 )
@@ -22,5 +23,13 @@ func main() {
 	id := hashService.GenerateHash()
 	fmt.Printf("Base62  ID: %s\n", id)
 
-	_mongoRepository := repository.NewMongoUrlRepository(mongoClient.GetDatabase())
+	//_mongoRepository := repository.NewMongoUrlRepository(mongoClient.GetDatabase())
+
+	router := adapters.NewRouter()
+	http.Handle("/", router)
+
+	err = http.ListenAndServe(os.Getenv("HTTP_PORT"), nil)
+	if err != nil {
+		log.Fatal(err)
+	}
 }
