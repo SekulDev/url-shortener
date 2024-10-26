@@ -26,7 +26,7 @@ func NewMongoUrlRepository(db *mongo.Database) *MongoUrlRepository {
 }
 
 func (m *MongoUrlRepository) Create(url *entity.Url) (primitive.ObjectID, error) {
-	result, err := m.collection.InsertOne(context.TODO(), url)
+	result, err := m.collection.InsertOne(context.Background(), url)
 	if err != nil {
 		return primitive.NilObjectID, err
 	}
@@ -37,13 +37,13 @@ func (m *MongoUrlRepository) Create(url *entity.Url) (primitive.ObjectID, error)
 func (m *MongoUrlRepository) GetByID(id string) (*entity.Url, error) {
 	idd, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
 	filter := bson.D{{"_id", idd}}
 
 	var result entity.Url
-	err = m.collection.FindOne(context.TODO(), filter).Decode(&result)
+	err = m.collection.FindOne(context.Background(), filter).Decode(&result)
 	if err != nil {
 		return nil, err
 	}
@@ -55,7 +55,7 @@ func (m *MongoUrlRepository) GetByShortUrl(url string) (*entity.Url, error) {
 	filter := bson.D{{"shortid", url}}
 
 	var result entity.Url
-	err := m.collection.FindOne(context.TODO(), filter).Decode(&result)
+	err := m.collection.FindOne(context.Background(), filter).Decode(&result)
 	if err != nil {
 		return nil, err
 	}
