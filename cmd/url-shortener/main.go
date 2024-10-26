@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"url-shortener/internal/adapters"
+	"url-shortener/internal/app/service"
 	"url-shortener/internal/app/usecase"
 	mongoDb "url-shortener/internal/infrastructure/database/mongo"
 	redisDb "url-shortener/internal/infrastructure/database/redis"
@@ -46,6 +47,8 @@ func main() {
 
 	router := adapters.NewRouter()
 	http.Handle("/", router)
+
+	_ = service.NewTemplateService()
 
 	http.ListenAndServe(os.Getenv("HTTP_PORT"), nil)
 }

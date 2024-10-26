@@ -4,3 +4,6 @@
 .env.dev
 .env
 .env.prod
+
+web/node_modules
+/web/static/tailwind.css

@@ -1,0 +1,15 @@
+{
+  "name": "url-shortener-web",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "tailwindcss build -o static/tailwind.css",
+    "watch": "tailwindcss build -o static/tailwind.css --watch"
+  },
+  "author": "SekulDev",
+  "license": "ISC",
+  "dependencies": {
+    "tailwindcss": "^3.4.14"
+  }
+}
