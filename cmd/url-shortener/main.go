@@ -2,20 +2,29 @@ package main
 
 import (
 	"fmt"
+	"github.com/go-redis/redis"
 	"log"
 	"net/http"
 	"os"
 	"url-shortener/internal/adapters"
-	"url-shortener/internal/infrastructure/database/mongo"
+	mongoDb "url-shortener/internal/infrastructure/database/mongo"
+	redisDb "url-shortener/internal/infrastructure/database/redis"
 	"url-shortener/internal/infrastructure/hashing"
 )
 
 func main() {
-	mongoClient, err := database.NewMongoClient(os.Getenv("MONGO_URL"), os.Getenv("MONGO_DATABASE"))
+	mongoClient, err := mongoDb.NewMongoClient(os.Getenv("MONGO_URL"), os.Getenv("MONGO_DATABASE"))
 	if err != nil {
 		log.Fatalf("Failed to connect to MongoDB: %v", err)
 	}
 	defer mongoClient.Disconnect()
+
+	redisClient := redisDb.NewRedisClient(&redis.Options{
+		Addr:     os.Getenv("REDIS_URL"),
+		Password: os.Getenv("REDIS_PASSWORD"),
+		DB:       0,
+	})
+	defer redisClient.Disconnect()
 
 	//@TODO make it everything in config bootstrap
 	node := hashing.InitSnowflakeNode(1)
