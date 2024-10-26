@@ -1,4 +1,4 @@
-package hashing
+package pkg
 
 import (
 	"github.com/stretchr/testify/assert"

@@ -1,13 +1,14 @@
-package hashing
+package usecase
 
 import (
 	"github.com/stretchr/testify/assert"
 	"testing"
+	"url-shortener/pkg"
 )
 
-func TestHashService_GenerateHash(t *testing.T) {
-	node := InitSnowflakeNode(1)
-	hashService := NewHashService(node)
+func TestHashUsecase_GenerateHash(t *testing.T) {
+	node := pkg.InitSnowflakeNode(1)
+	hashService := NewHashUsecase(node)
 
 	hash := hashService.GenerateHash()
 

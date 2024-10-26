@@ -7,9 +7,10 @@ import (
 	"net/http"
 	"os"
 	"url-shortener/internal/adapters"
+	"url-shortener/internal/app/usecase"
 	mongoDb "url-shortener/internal/infrastructure/database/mongo"
 	redisDb "url-shortener/internal/infrastructure/database/redis"
-	"url-shortener/internal/infrastructure/hashing"
+	"url-shortener/pkg"
 )
 
 func main() {
@@ -27,18 +28,24 @@ func main() {
 	defer redisClient.Disconnect()
 
 	//@TODO make it everything in config bootstrap
-	node := hashing.InitSnowflakeNode(1)
-	hashService := hashing.NewHashService(node)
-	id := hashService.GenerateHash()
+	node := pkg.InitSnowflakeNode(1)
+	hashUsecase := usecase.NewHashUsecase(node)
+	id := hashUsecase.GenerateHash()
 	fmt.Printf("Base62  ID: %s\n", id)
 
-	//_mongoRepository := repository.NewMongoUrlRepository(mongoClient.GetDatabase())
+	//mongoRepository := repository.NewMongoUrlRepository(mongoClient.GetDatabase())
+	//uc := usecase.NewUrlUsecase(mongoRepository, redisClient)
+	//us := service.NewUrlService(uc)
+	//
+	//resultUrl, err := us.ResolveShortUrl("2CeYV8b0XYn")
+	//if err != nil {
+	//	fmt.Printf("Failed to resolve short url: %v", err)
+	//	return
+	//}
+	//fmt.Println(resultUrl.ShortId, resultUrl.LongUrl)
 
 	router := adapters.NewRouter()
 	http.Handle("/", router)
 
-	err = http.ListenAndServe(os.Getenv("HTTP_PORT"), nil)
-	if err != nil {
-		log.Fatal(err)
-	}
+	http.ListenAndServe(os.Getenv("HTTP_PORT"), nil)
 }

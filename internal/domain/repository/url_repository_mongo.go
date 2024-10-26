@@ -15,6 +15,7 @@ type UrlRepository interface {
 }
 
 type MongoUrlRepository struct {
+	UrlRepository
 	collection *mongo.Collection
 }
 
