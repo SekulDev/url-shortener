@@ -2,11 +2,11 @@
 
 {{define "content"}}
     <div id="content" class="max-w-md mx-auto">
-        <form class="space-y-4" hx-post="url" hx-target="content" hx-encoding="multipart/form-data" hx-swap="outerHTML">
+        <form class="space-y-4" hx-post="/url" hx-target="#content" hx-encoding="multipart/form-data" hx-swap="innerHTML">
             <div class="space-y-2">
                 <label class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70" for="longurl">Your URL</label>
                 <input
-                    class="flex h-10 w-full rounded-md border border-input px-3 py-2 text-sm ring-offset-gray-800 placeholder:text-gray-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                    class="flex h-10 w-full rounded-md border border-input px-3 py-2 text-sm ring-offset-gray-800 placeholder:text-gray-800/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                     id="longurl"
                     name="longurl"
                     placeholder="https://github.com/SekulDev"
