@@ -3,19 +3,17 @@ package adapters
 import (
 	"github.com/gorilla/mux"
 	"net/http"
+	"url-shortener/internal/adapters/handlers"
+	"url-shortener/internal/infrastructure"
 )
 
-func NewRouter() *mux.Router {
+func NewRouter(server *infrastructure.Server) *mux.Router {
 
 	router := mux.NewRouter()
 
-	router.HandleFunc("/{short_id}", func(w http.ResponseWriter, r *http.Request) {
-
-	}).Methods("GET")
-
-	router.HandleFunc("/url", func(w http.ResponseWriter, r *http.Request) {
-
-	}).Methods("POST")
+	urlHandlers := handlers.NewUrlHandlers(server.Services.UrlService, server.Services.TemplateService)
+	router.HandleFunc("/{short_id}", urlHandlers.ShortIdHandler).Methods("GET")
+	router.HandleFunc("/url", urlHandlers.AddUrlHandler).Methods("POST")
 
 	router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("web/static"))))
 

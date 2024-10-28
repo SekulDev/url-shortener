@@ -12,6 +12,7 @@ type RedisClient struct {
 }
 
 func NewRedisClient(opts *redis.Options) *RedisClient {
+	log.Println("Connected to Redis!")
 	return &RedisClient{
 		ctx:    context.Background(),
 		Client: redis.NewClient(opts),
@@ -19,6 +20,7 @@ func NewRedisClient(opts *redis.Options) *RedisClient {
 }
 
 func (r *RedisClient) Disconnect() error {
+	log.Println("Disconnected from Redis!")
 	err := r.Client.Close()
 	if err != nil {
 		log.Fatalf("Could not close Redis client: %v", err)
