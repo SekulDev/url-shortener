@@ -11,6 +11,9 @@ func NewRouter(server *infrastructure.Server) *mux.Router {
 
 	router := mux.NewRouter()
 
+	pagesHandler := handlers.NewPagesHandlers(server.Services.TemplateService)
+	router.HandleFunc("/", pagesHandler.Index).Methods("GET")
+
 	urlHandlers := handlers.NewUrlHandlers(server.Services.UrlService, server.Services.TemplateService)
 	router.HandleFunc("/{short_id}", urlHandlers.ShortIdHandler).Methods("GET")
 	router.HandleFunc("/url", urlHandlers.AddUrlHandler).Methods("POST")

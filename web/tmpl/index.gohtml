@@ -1,0 +1,23 @@
+{{define "title"}}Add URL{{end}}
+
+{{define "content"}}
+    <div id="content" class="max-w-md mx-auto">
+        <form class="space-y-4" hx-post="url" hx-target="content" hx-encoding="multipart/form-data" hx-swap="outerHTML">
+            <div class="space-y-2">
+                <label class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70" for="longurl">Your URL</label>
+                <input
+                    class="flex h-10 w-full rounded-md border border-input px-3 py-2 text-sm ring-offset-gray-800 placeholder:text-gray-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                    id="longurl"
+                    name="longurl"
+                    placeholder="https://github.com/SekulDev"
+                    type="text" />
+            </div>
+            <button
+                class="h-10 px-4 py-2 bg-gray-800 text-white hover:bg-gray-800/90 inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-gray-800 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0"
+                type="submit">
+                Submit
+            </button>
+        </form>
+    </div>
+{{end}}
+

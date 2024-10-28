@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="description" content="URL Shortener">
+    <meta name="author" content="SekulDev">
+    <meta name="keywords" content="URL Shortener">
+
+    <title>{{ template "title" . }} - URL Shortener</title>
+    <link rel="stylesheet" href="/static/tailwind.css" />
+    <script src="/static/index.js"></script>
+    <script src="https://unpkg.com/htmx.org@2.0.3"></script>
+</head>
+<body class="h-screen">
+    <main class="bg-neutral-300 w-full min-h-full flex flex-col">
+        <header class="py-6 bg-zinc-800">
+            <div class="container mx-auto px-4">
+                <h1 class="text-2xl font-bold text-white">URL Shortener</h1>
+            </div>
+        </header>
+        <div class="flex-grow container mx-auto px-4 py-8">
+            {{ template "content" . }}
+        </div>
+        <footer class="p-4 text-gray-800 flex flex-center justify-center text-center">
+            &copy; 2024 SekulDev
+        </footer>
+    </main>
+</body>
+</html>

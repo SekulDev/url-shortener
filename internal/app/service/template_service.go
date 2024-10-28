@@ -11,8 +11,8 @@ type TemplateService struct {
 
 func NewTemplateService() *TemplateService {
 
-	templates := template.Must(template.ParseGlob("web/tmpl/*.html"))
-	template.Must(templates.ParseGlob("web/tmpl/partials/*.html"))
+	templates := template.Must(template.ParseGlob("web/tmpl/*.gohtml"))
+	//template.Must(templates.ParseGlob("web/tmpl/partials/*.gohtml"))
 
 	return &TemplateService{
 		templates: templates,
@@ -20,5 +20,13 @@ func NewTemplateService() *TemplateService {
 }
 
 func (t *TemplateService) Render(w io.Writer, name string, data interface{}) error {
-	return t.templates.ExecuteTemplate(w, name, data)
+	err := t.templates.ExecuteTemplate(w, name, data)
+	if err != nil {
+		return err
+	}
+	err2 := t.templates.ExecuteTemplate(w, "layout.gohtml", data)
+	if err2 != nil {
+		return err2
+	}
+	return nil
 }
