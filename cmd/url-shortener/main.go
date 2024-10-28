@@ -1,6 +1,7 @@
 package main
 
 import (
+	"log"
 	"net/http"
 	"os"
 	"url-shortener/internal/adapters"
@@ -13,5 +14,9 @@ func main() {
 	router := adapters.NewRouter(server)
 	http.Handle("/", router)
 
-	http.ListenAndServe(os.Getenv("HTTP_PORT"), nil)
+	err := http.ListenAndServe(os.Getenv("HTTP_PORT"), nil)
+	if err != nil {
+		log.Fatalf("Failed to start server: %v", err)
+		return
+	}
 }
