@@ -4,6 +4,7 @@ import (
 	"github.com/gorilla/mux"
 	"net/http"
 	"url-shortener/internal/adapters/handlers"
+	"url-shortener/internal/adapters/middleware"
 	"url-shortener/internal/infrastructure"
 )
 
@@ -15,8 +16,9 @@ func NewRouter(server *infrastructure.Server) *mux.Router {
 	router.HandleFunc("/", pagesHandler.Index).Methods("GET")
 
 	urlHandlers := handlers.NewUrlHandlers(server.Services.UrlService, server.Services.TemplateService)
+	ipMiddleware := middleware.NewIpMiddleware()
 	router.HandleFunc("/{short_id}", urlHandlers.ShortIdHandler).Methods("GET")
-	router.HandleFunc("/url", urlHandlers.AddUrlHandler).Methods("POST")
+	router.HandleFunc("/url", ipMiddleware.Handle(urlHandlers.AddUrlHandler)).Methods("POST")
 
 	router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("web/static"))))
 
