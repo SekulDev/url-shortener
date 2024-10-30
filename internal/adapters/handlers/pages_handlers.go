@@ -16,7 +16,7 @@ func NewPagesHandlers(templateService *service.TemplateService) *PagesHandlers {
 }
 
 func (h *PagesHandlers) Index(w http.ResponseWriter, r *http.Request) {
-	err := h.templateService.Render(w, "index.gohtml", nil)
+	err := h.templateService.RenderPage(w, "index.gohtml", nil)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 	}
