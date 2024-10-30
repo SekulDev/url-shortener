@@ -18,8 +18,9 @@ type Repositories struct {
 }
 
 type Usecases struct {
-	HashUsecase *usecase.HashUsecase
-	UrlUsecase  *usecase.UrlUsecaseImpl
+	HashUsecase      *usecase.HashUsecase
+	UrlUsecase       *usecase.UrlUsecaseImpl
+	RateLimitUsecase *usecase.RateLimitUsecaseImpl
 }
 
 type Services struct {
@@ -81,8 +82,9 @@ func NewServer() *Server {
 			UrlRepository: urlRepository,
 		},
 		Usecases: &Usecases{
-			HashUsecase: hashUsecase,
-			UrlUsecase:  urlUsecase,
+			HashUsecase:      hashUsecase,
+			UrlUsecase:       urlUsecase,
+			RateLimitUsecase: rateLimitUsecase,
 		},
 		Services: &Services{
 			TemplateService: templateService,
