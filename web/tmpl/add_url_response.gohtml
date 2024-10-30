@@ -1,0 +1,49 @@
+{{if .error }}
+    <div id="alert" class="relative max-w-md rounded-lg border p-4 border-red-800/80 text-red-800 bg-red-200 mb-3">
+        <h5 class="mb-1 font-medium leading-none tracking-tight">
+            {{ if eq .error "too many requests" }}
+                Too many requests!
+            {{else if eq .error "invalid url"}}
+                Invalid url
+            {{end}}
+        </h5>
+        <div class="text-sm [&_p]:leading-relaxed">
+            <p>
+                {{ if eq .error "too many requests" }}
+                    You already registered URL. Try again later
+                {{else if eq .error "invalid url"}}
+                    Typed URL is invalid. Remember that URLs must start with http:// or https://
+                {{end}}
+            </p>
+        </div>
+        <div class="w-full flex justify-end align-center">
+            <button
+                class="h-10 px-5 py-1 bg-red-800 text-white hover:bg-red-800/90 inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-red-800 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
+                hx-on:click="document.getElementById('alert').remove()"
+            >
+                Close
+            </button>
+
+        </div>
+    </div>
+{{ else if .short_url}}
+    <div id="alert" class="relative max-w-md rounded-lg border p-4 border-green-800/80 text-green-800 bg-green-200 mb-3">
+        <h5 class="mb-1 font-medium leading-none tracking-tight">
+            URL Shorted
+        </h5>
+        <div class="text-sm [&_p]:leading-relaxed">
+            <p>
+                Your shorted URL is <span class="text-underline">{{ .short_url }}</span>
+            </p>
+        </div>
+        <div class="w-full flex justify-end align-center">
+            <button
+                    class="h-10 px-5 py-1 bg-green-800 text-white hover:bg-green-800/90 inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-green-800 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
+                    hx-on:click="navigator.clipboard.writeText(window.location.href + '{{.short_url}}')"
+            >
+                Copy
+            </button>
+
+        </div>
+    </div>
+{{end}}

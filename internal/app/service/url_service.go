@@ -2,24 +2,28 @@ package service
 
 import (
 	"url-shortener/internal/app/usecase"
+	"url-shortener/internal/domain/apperrors"
 	"url-shortener/internal/domain/entity"
+	"url-shortener/pkg"
 )
 
 type UrlService interface {
 	ResolveShortUrl(url string) (*entity.Url, error)
-	AddUrl(longUrl string) (*entity.Url, error)
+	AddUrl(longUrl string, ip string) (*entity.Url, error)
 }
 
 type UrlServiceImpl struct {
 	UrlService
-	usecase     *usecase.UrlUsecaseImpl
-	hashUsecase *usecase.HashUsecase
+	usecase          *usecase.UrlUsecaseImpl
+	hashUsecase      *usecase.HashUsecase
+	rateLimitUsecase *usecase.RateLimitUsecaseImpl
 }
 
-func NewUrlService(u *usecase.UrlUsecaseImpl, h *usecase.HashUsecase) *UrlServiceImpl {
+func NewUrlService(u *usecase.UrlUsecaseImpl, h *usecase.HashUsecase, rl *usecase.RateLimitUsecaseImpl) *UrlServiceImpl {
 	return &UrlServiceImpl{
-		usecase:     u,
-		hashUsecase: h,
+		usecase:          u,
+		hashUsecase:      h,
+		rateLimitUsecase: rl,
 	}
 }
 
@@ -43,7 +47,15 @@ func (u *UrlServiceImpl) ResolveShortUrl(url string) (*entity.Url, error) {
 	return dbUrl, nil
 }
 
-func (u *UrlServiceImpl) AddUrl(longUrl string) (*entity.Url, error) {
+func (u *UrlServiceImpl) AddUrl(longUrl string, ip string) (*entity.Url, error) {
+	if !pkg.IsValidUrl(longUrl) {
+		return nil, apperrors.InvalidUrlError
+	}
+
+	if !u.rateLimitUsecase.IsAllowed(ip) {
+		return nil, apperrors.TooManyRequests
+	}
+
 	shortUrl := u.hashUsecase.GenerateHash()
 
 	url := entity.Url{
@@ -51,10 +63,12 @@ func (u *UrlServiceImpl) AddUrl(longUrl string) (*entity.Url, error) {
 		ShortId: shortUrl,
 	}
 
-	err := u.usecase.AddUrlToCache(&url)
+	err := u.usecase.AddUrlToDatabase(&url)
 	if err != nil {
 		return nil, err
 	}
+
+	_ = u.rateLimitUsecase.Disallow(ip)
 
 	return &url, nil
 }

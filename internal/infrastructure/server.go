@@ -68,10 +68,11 @@ func NewServer() *Server {
 	// usecases
 	hashUsecase := usecase.NewHashUsecase(node)
 	urlUsecase := usecase.NewUrlUsecase(urlRepository, redisClient)
+	rateLimitUsecase := usecase.NewRateLimitUsecase(redisClient)
 
 	// services
 	templateService := service.NewTemplateService()
-	urlService := service.NewUrlService(urlUsecase, hashUsecase)
+	urlService := service.NewUrlService(urlUsecase, hashUsecase, rateLimitUsecase)
 
 	server := &Server{
 		Mongo: mongoClient,

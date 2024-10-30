@@ -3,6 +3,7 @@ package handlers
 import (
 	"github.com/gorilla/mux"
 	"net/http"
+	"url-shortener/internal/adapters/middleware"
 	"url-shortener/internal/app/service"
 )
 
@@ -32,5 +33,27 @@ func (h *UrlHandlers) ShortIdHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *UrlHandlers) AddUrlHandler(w http.ResponseWriter, r *http.Request) {
+	ip, ok := r.Context().Value(middleware.IpContextKey).(string)
+	if !ok {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	url := r.FormValue("longurl")
 
+	result, err := h.urlService.AddUrl(url, ip)
+	if err != nil {
+		err := h.templateService.Render(w, "add_url_response.gohtml", map[string]interface{}{
+			"error": err.Error(),
+		})
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+		}
+	} else {
+		err := h.templateService.Render(w, "add_url_response.gohtml", map[string]interface{}{
+			"short_url": result.ShortId,
+		})
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+		}
+	}
 }
