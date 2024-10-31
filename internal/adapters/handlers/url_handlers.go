@@ -21,9 +21,9 @@ func NewUrlHandlers(urlService *service.UrlServiceImpl, templateService *service
 
 func (h *UrlHandlers) ShortIdHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	short_id := vars["short_id"]
+	shortId := vars["short_id"]
 
-	url, err := h.urlService.ResolveShortUrl(short_id)
+	url, err := h.urlService.ResolveShortUrl(shortId)
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
 		return
