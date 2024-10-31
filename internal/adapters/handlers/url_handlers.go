@@ -39,8 +39,9 @@ func (h *UrlHandlers) AddUrlHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	url := r.FormValue("longurl")
+	recaptchaToken := r.FormValue("g-recaptcha-response")
 
-	result, err := h.urlService.AddUrl(url, ip)
+	result, err := h.urlService.AddUrl(url, ip, recaptchaToken)
 	if err != nil {
 		err := h.templateService.Render(w, "add_url_response.gohtml", map[string]interface{}{
 			"error": err.Error(),

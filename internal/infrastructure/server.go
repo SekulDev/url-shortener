@@ -2,6 +2,7 @@ package infrastructure
 
 import (
 	"github.com/go-redis/redis"
+	"github.com/xinguang/go-recaptcha"
 	"log"
 	"os"
 	"strconv"
@@ -13,6 +14,11 @@ import (
 	"url-shortener/pkg"
 )
 
+type Recaptcha struct {
+	Public string
+	Secret string
+}
+
 type Repositories struct {
 	UrlRepository *repository.MongoUrlRepository
 }
@@ -21,6 +27,7 @@ type Usecases struct {
 	HashUsecase      *usecase.HashUsecase
 	UrlUsecase       *usecase.UrlUsecaseImpl
 	RateLimitUsecase *usecase.RateLimitUsecaseImpl
+	RecaptchaUsecase *usecase.RecaptchaUsecaseImpl
 }
 
 type Services struct {
@@ -34,6 +41,7 @@ type Server struct {
 	Repositories *Repositories
 	Usecases     *Usecases
 	Services     *Services
+	Recaptcha    *Recaptcha
 }
 
 func NewServer() *Server {
@@ -60,6 +68,17 @@ func NewServer() *Server {
 		snowflakeID = converted
 	}
 
+	// recaptcha
+	recaptchaKeys := &Recaptcha{
+		Public: os.Getenv("RECAPTCHA_PUBLIC"),
+		Secret: os.Getenv("RECAPTCHA_SECRET"),
+	}
+
+	recaptchaObj, recaptchaErr := recaptcha.NewWithSecert(recaptchaKeys.Secret)
+	if recaptchaErr != nil {
+		log.Fatalf("Failed to initialize recaptcha: %v", recaptchaErr)
+	}
+
 	// snowflake node
 	node := pkg.InitSnowflakeNode(snowflakeID)
 
@@ -70,10 +89,11 @@ func NewServer() *Server {
 	hashUsecase := usecase.NewHashUsecase(node)
 	urlUsecase := usecase.NewUrlUsecase(urlRepository, redisClient)
 	rateLimitUsecase := usecase.NewRateLimitUsecase(redisClient)
+	recaptchaUsecase := usecase.NewRecaptchaUsecase(recaptchaObj)
 
 	// services
-	templateService := service.NewTemplateService()
-	urlService := service.NewUrlService(urlUsecase, hashUsecase, rateLimitUsecase)
+	templateService := service.NewTemplateService(recaptchaKeys.Public)
+	urlService := service.NewUrlService(urlUsecase, hashUsecase, rateLimitUsecase, recaptchaUsecase)
 
 	server := &Server{
 		Mongo: mongoClient,
@@ -85,11 +105,13 @@ func NewServer() *Server {
 			HashUsecase:      hashUsecase,
 			UrlUsecase:       urlUsecase,
 			RateLimitUsecase: rateLimitUsecase,
+			RecaptchaUsecase: recaptchaUsecase,
 		},
 		Services: &Services{
 			TemplateService: templateService,
 			UrlService:      urlService,
 		},
+		Recaptcha: recaptchaKeys,
 	}
 
 	return server

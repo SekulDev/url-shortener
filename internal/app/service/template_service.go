@@ -6,16 +6,18 @@ import (
 )
 
 type TemplateService struct {
-	templates *template.Template
+	templates       *template.Template
+	recaptchaPublic string
 }
 
-func NewTemplateService() *TemplateService {
+func NewTemplateService(recaptchaPublic string) *TemplateService {
 
 	templates := template.Must(template.ParseGlob("web/tmpl/*.gohtml"))
 	//template.Must(templates.ParseGlob("web/tmpl/partials/*.gohtml"))
 
 	return &TemplateService{
-		templates: templates,
+		templates:       templates,
+		recaptchaPublic: recaptchaPublic,
 	}
 }
 
@@ -25,7 +27,9 @@ func (t *TemplateService) RenderPage(w io.Writer, name string, data interface{})
 		return err
 	}
 
-	err2 := t.templates.ExecuteTemplate(w, "layout.gohtml", data)
+	err2 := t.templates.ExecuteTemplate(w, "layout.gohtml", map[string]interface{}{
+		"RecaptchaPublic": t.recaptchaPublic,
+	})
 	if err2 != nil {
 		return err2
 	}

@@ -1,3 +1,5 @@
+
+
 {{if .error }}
     <div id="alert" class="relative max-w-md rounded-lg border p-4 border-red-800/80 text-red-800 bg-red-200 mb-3">
         <h5 class="mb-1 font-medium leading-none tracking-tight">
@@ -5,6 +7,8 @@
                 Too many requests!
             {{else if eq .error "invalid url"}}
                 Invalid url
+            {{ else if eq .error "recaptcha error" }}
+                Recaptcha error
             {{end}}
         </h5>
         <div class="text-sm [&_p]:leading-relaxed">
@@ -13,6 +17,8 @@
                     You already registered URL. Try again later
                 {{else if eq .error "invalid url"}}
                     Typed URL is invalid. Remember that URLs must start with http:// or https://
+                {{else if eq .error "recaptcha error"}}
+                    There was an error with recaptcha. Try again
                 {{end}}
             </p>
         </div>

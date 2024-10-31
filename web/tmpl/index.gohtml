@@ -1,8 +1,17 @@
 {{define "title"}}Add URL{{end}}
 
+{{define "scripts"}}
+    <script>
+        window.addEventListener('htmx:after-swap', () => {
+            grecaptcha?.reset();
+        })
+    </script>
+{{end}}
+
 {{define "content"}}
     <div id="content" class="max-w-md mx-auto">
-        <form class="space-y-4" hx-post="/url" hx-target="#content" hx-encoding="multipart/form-data" hx-swap="afterbegin">
+        <div id="result"></div>
+        <form class="space-y-4" hx-post="/url" hx-target="#result" hx-encoding="multipart/form-data" hx-swap="innerHTML">
             <div class="space-y-2">
                 <label class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70" for="longurl">Your URL</label>
                 <input
@@ -13,6 +22,9 @@
                     minlength="6"
                     placeholder="https://github.com/SekulDev"
                     type="text" />
+            </div>
+            <div class="space-y-2">
+                <div class="g-recaptcha w-full" data-sitekey="{{ .RecaptchaPublic }}"></div>
             </div>
             <button
                 class="h-10 px-4 py-2 bg-gray-800 text-white hover:bg-gray-800/90 inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-gray-800 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0"

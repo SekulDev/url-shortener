@@ -17,13 +17,15 @@ type UrlServiceImpl struct {
 	usecase          *usecase.UrlUsecaseImpl
 	hashUsecase      *usecase.HashUsecase
 	rateLimitUsecase *usecase.RateLimitUsecaseImpl
+	recaptchaUsecase *usecase.RecaptchaUsecaseImpl
 }
 
-func NewUrlService(u *usecase.UrlUsecaseImpl, h *usecase.HashUsecase, rl *usecase.RateLimitUsecaseImpl) *UrlServiceImpl {
+func NewUrlService(u *usecase.UrlUsecaseImpl, h *usecase.HashUsecase, rl *usecase.RateLimitUsecaseImpl, r *usecase.RecaptchaUsecaseImpl) *UrlServiceImpl {
 	return &UrlServiceImpl{
 		usecase:          u,
 		hashUsecase:      h,
 		rateLimitUsecase: rl,
+		recaptchaUsecase: r,
 	}
 }
 
@@ -47,7 +49,12 @@ func (u *UrlServiceImpl) ResolveShortUrl(url string) (*entity.Url, error) {
 	return dbUrl, nil
 }
 
-func (u *UrlServiceImpl) AddUrl(longUrl string, ip string) (*entity.Url, error) {
+func (u *UrlServiceImpl) AddUrl(longUrl string, ip string, recaptchaToken string) (*entity.Url, error) {
+	recaptchaErr := u.recaptchaUsecase.Verify(recaptchaToken)
+	if recaptchaErr != nil {
+		return nil, apperrors.RecaptchaError
+	}
+
 	if !pkg.IsValidUrl(longUrl) {
 		return nil, apperrors.InvalidUrlError
 	}
