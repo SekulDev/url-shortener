@@ -8,11 +8,11 @@ import (
 )
 
 type UrlHandlers struct {
-	urlService      *service.UrlServiceImpl
-	templateService *service.TemplateService
+	urlService      service.UrlService
+	templateService service.TemplateService
 }
 
-func NewUrlHandlers(urlService *service.UrlServiceImpl, templateService *service.TemplateService) *UrlHandlers {
+func NewUrlHandlers(urlService service.UrlService, templateService service.TemplateService) *UrlHandlers {
 	return &UrlHandlers{
 		urlService:      urlService,
 		templateService: templateService,

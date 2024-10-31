@@ -6,16 +6,16 @@ type RecaptchaUsecase interface {
 	Verify(token string) error
 }
 
-type RecaptchaUsecaseImpl struct {
+type recaptchaUsecaseImpl struct {
 	recaptcha *recaptcha.ReCAPTCHA
 }
 
-func NewRecaptchaUsecase(recaptcha *recaptcha.ReCAPTCHA) *RecaptchaUsecaseImpl {
-	return &RecaptchaUsecaseImpl{
+func NewRecaptchaUsecase(recaptcha *recaptcha.ReCAPTCHA) RecaptchaUsecase {
+	return &recaptchaUsecaseImpl{
 		recaptcha: recaptcha,
 	}
 }
 
-func (rl *RecaptchaUsecaseImpl) Verify(token string) error {
+func (rl *recaptchaUsecaseImpl) Verify(token string) error {
 	return rl.recaptcha.Verify(token)
 }

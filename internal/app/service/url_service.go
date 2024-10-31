@@ -12,16 +12,15 @@ type UrlService interface {
 	AddUrl(longUrl string, ip string, recaptchaToken string) (*entity.Url, error)
 }
 
-type UrlServiceImpl struct {
-	UrlService
-	usecase          *usecase.UrlUsecaseImpl
-	hashUsecase      *usecase.HashUsecase
-	rateLimitUsecase *usecase.RateLimitUsecaseImpl
-	recaptchaUsecase *usecase.RecaptchaUsecaseImpl
+type urlServiceImpl struct {
+	usecase          usecase.UrlUsecase
+	hashUsecase      usecase.HashUsecase
+	rateLimitUsecase usecase.RateLimitUsecase
+	recaptchaUsecase usecase.RecaptchaUsecase
 }
 
-func NewUrlService(u *usecase.UrlUsecaseImpl, h *usecase.HashUsecase, rl *usecase.RateLimitUsecaseImpl, r *usecase.RecaptchaUsecaseImpl) *UrlServiceImpl {
-	return &UrlServiceImpl{
+func NewUrlService(u usecase.UrlUsecase, h usecase.HashUsecase, rl usecase.RateLimitUsecase, r usecase.RecaptchaUsecase) UrlService {
+	return &urlServiceImpl{
 		usecase:          u,
 		hashUsecase:      h,
 		rateLimitUsecase: rl,
@@ -29,7 +28,7 @@ func NewUrlService(u *usecase.UrlUsecaseImpl, h *usecase.HashUsecase, rl *usecas
 	}
 }
 
-func (u *UrlServiceImpl) ResolveShortUrl(url string) (*entity.Url, error) {
+func (u *urlServiceImpl) ResolveShortUrl(url string) (*entity.Url, error) {
 	cacheUrl, cacheErr := u.usecase.GetUrlFromCache(url)
 	if cacheErr != nil {
 		return nil, cacheErr
@@ -49,7 +48,7 @@ func (u *UrlServiceImpl) ResolveShortUrl(url string) (*entity.Url, error) {
 	return dbUrl, nil
 }
 
-func (u *UrlServiceImpl) AddUrl(longUrl string, ip string, recaptchaToken string) (*entity.Url, error) {
+func (u *urlServiceImpl) AddUrl(longUrl string, ip string, recaptchaToken string) (*entity.Url, error) {
 	recaptchaErr := u.recaptchaUsecase.Verify(recaptchaToken)
 	if recaptchaErr != nil {
 		return nil, apperrors.RecaptchaError

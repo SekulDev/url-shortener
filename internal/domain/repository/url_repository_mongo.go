@@ -14,18 +14,17 @@ type UrlRepository interface {
 	GetByShortUrl(url string) (*entity.Url, error)
 }
 
-type MongoUrlRepository struct {
-	UrlRepository
+type mongoUrlRepository struct {
 	collection *mongo.Collection
 }
 
-func NewMongoUrlRepository(db *mongo.Database) *MongoUrlRepository {
-	return &MongoUrlRepository{
+func NewMongoUrlRepository(db *mongo.Database) UrlRepository {
+	return &mongoUrlRepository{
 		collection: db.Collection("urls"),
 	}
 }
 
-func (m *MongoUrlRepository) Create(url *entity.Url) (primitive.ObjectID, error) {
+func (m *mongoUrlRepository) Create(url *entity.Url) (primitive.ObjectID, error) {
 	result, err := m.collection.InsertOne(context.Background(), url)
 	if err != nil {
 		return primitive.NilObjectID, err
@@ -34,7 +33,7 @@ func (m *MongoUrlRepository) Create(url *entity.Url) (primitive.ObjectID, error)
 	return result.InsertedID.(primitive.ObjectID), nil
 }
 
-func (m *MongoUrlRepository) GetByID(id string) (*entity.Url, error) {
+func (m *mongoUrlRepository) GetByID(id string) (*entity.Url, error) {
 	idd, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
 		return nil, err
@@ -51,7 +50,7 @@ func (m *MongoUrlRepository) GetByID(id string) (*entity.Url, error) {
 	return &result, nil
 }
 
-func (m *MongoUrlRepository) GetByShortUrl(url string) (*entity.Url, error) {
+func (m *mongoUrlRepository) GetByShortUrl(url string) (*entity.Url, error) {
 	filter := bson.D{{"shortid", url}}
 
 	var result entity.Url

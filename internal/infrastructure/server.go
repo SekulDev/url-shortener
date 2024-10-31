@@ -20,19 +20,19 @@ type Recaptcha struct {
 }
 
 type Repositories struct {
-	UrlRepository *repository.MongoUrlRepository
+	UrlRepository repository.UrlRepository
 }
 
 type Usecases struct {
-	HashUsecase      *usecase.HashUsecase
-	UrlUsecase       *usecase.UrlUsecaseImpl
-	RateLimitUsecase *usecase.RateLimitUsecaseImpl
-	RecaptchaUsecase *usecase.RecaptchaUsecaseImpl
+	HashUsecase      usecase.HashUsecase
+	UrlUsecase       usecase.UrlUsecase
+	RateLimitUsecase usecase.RateLimitUsecase
+	RecaptchaUsecase usecase.RecaptchaUsecase
 }
 
 type Services struct {
-	TemplateService *service.TemplateService
-	UrlService      *service.UrlServiceImpl
+	TemplateService service.TemplateService
+	UrlService      service.UrlService
 }
 
 type Server struct {

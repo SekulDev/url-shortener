@@ -9,8 +9,8 @@ type HashUsecase struct {
 	node *snowflake.Node
 }
 
-func NewHashUsecase(node *snowflake.Node) *HashUsecase {
-	return &HashUsecase{node: node}
+func NewHashUsecase(node *snowflake.Node) HashUsecase {
+	return HashUsecase{node: node}
 }
 
 func (s *HashUsecase) GenerateHash() string {

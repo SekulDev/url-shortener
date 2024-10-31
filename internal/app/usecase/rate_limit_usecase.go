@@ -13,22 +13,22 @@ type RateLimitUsecase interface {
 	Disallow(ip string) error
 }
 
-type RateLimitUsecaseImpl struct {
+type rateLimitUsecaseImpl struct {
 	redis        database.RedisClient
 	disallowTime time.Duration
 }
 
-func NewRateLimitUsecase(redis *database.RedisClient) *RateLimitUsecaseImpl {
-	return &RateLimitUsecaseImpl{
+func NewRateLimitUsecase(redis *database.RedisClient) RateLimitUsecase {
+	return &rateLimitUsecaseImpl{
 		redis:        *redis,
 		disallowTime: time.Minute * 10,
 	}
 }
 
-func (rl *RateLimitUsecaseImpl) IsAllowed(ip string) bool {
+func (rl *rateLimitUsecaseImpl) IsAllowed(ip string) bool {
 	return rl.redis.Client.Exists(fmt.Sprintf(rateLimitKey, ip)).Val() == 0
 }
 
-func (rl *RateLimitUsecaseImpl) Disallow(ip string) error {
+func (rl *rateLimitUsecaseImpl) Disallow(ip string) error {
 	return rl.redis.Client.Set(fmt.Sprintf(rateLimitKey, ip), 1, rl.disallowTime).Err()
 }

@@ -20,22 +20,21 @@ type UrlUsecase interface {
 	AddUrlToDatabase(url *entity.Url) error
 }
 
-type UrlUsecaseImpl struct {
-	UrlUsecase
-	repo      *repository.MongoUrlRepository
+type urlUsecaseImpl struct {
+	repo      repository.UrlRepository
 	redis     redis.Client
 	cacheTime time.Duration
 }
 
-func NewUrlUsecase(r *repository.MongoUrlRepository, redis *database.RedisClient) *UrlUsecaseImpl {
-	return &UrlUsecaseImpl{
+func NewUrlUsecase(r repository.UrlRepository, redis *database.RedisClient) UrlUsecase {
+	return &urlUsecaseImpl{
 		repo:      r,
 		redis:     *redis.Client,
 		cacheTime: time.Minute * 15,
 	}
 }
 
-func (u *UrlUsecaseImpl) GetUrlFromCache(url string) (*entity.Url, error) {
+func (u *urlUsecaseImpl) GetUrlFromCache(url string) (*entity.Url, error) {
 	var result entity.Url
 	data, err := u.redis.Get(fmt.Sprintf(redisKey, url)).Result()
 	if errors.Is(err, redis.Nil) {
@@ -50,7 +49,7 @@ func (u *UrlUsecaseImpl) GetUrlFromCache(url string) (*entity.Url, error) {
 	}
 }
 
-func (u *UrlUsecaseImpl) GetUrlFromDatabase(url string) (*entity.Url, error) {
+func (u *urlUsecaseImpl) GetUrlFromDatabase(url string) (*entity.Url, error) {
 	result, err := u.repo.GetByShortUrl(url)
 	if err != nil {
 		return nil, err
@@ -62,7 +61,7 @@ func (u *UrlUsecaseImpl) GetUrlFromDatabase(url string) (*entity.Url, error) {
 	return result, nil
 }
 
-func (u *UrlUsecaseImpl) AddUrlToCache(url *entity.Url) error {
+func (u *urlUsecaseImpl) AddUrlToCache(url *entity.Url) error {
 	data, jsonErr := json.Marshal(url)
 	if jsonErr != nil {
 		return jsonErr
@@ -72,7 +71,7 @@ func (u *UrlUsecaseImpl) AddUrlToCache(url *entity.Url) error {
 	return err
 }
 
-func (u *UrlUsecaseImpl) AddUrlToDatabase(url *entity.Url) error {
+func (u *urlUsecaseImpl) AddUrlToDatabase(url *entity.Url) error {
 	_, err := u.repo.Create(url)
 	if err != nil {
 		return err

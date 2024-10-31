@@ -6,10 +6,10 @@ import (
 )
 
 type PagesHandlers struct {
-	templateService *service.TemplateService
+	templateService service.TemplateService
 }
 
-func NewPagesHandlers(templateService *service.TemplateService) *PagesHandlers {
+func NewPagesHandlers(templateService service.TemplateService) *PagesHandlers {
 	return &PagesHandlers{
 		templateService: templateService,
 	}

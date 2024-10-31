@@ -10,12 +10,12 @@ type TemplateService struct {
 	recaptchaPublic string
 }
 
-func NewTemplateService(recaptchaPublic string) *TemplateService {
+func NewTemplateService(recaptchaPublic string) TemplateService {
 
 	templates := template.Must(template.ParseGlob("web/tmpl/*.gohtml"))
 	//template.Must(templates.ParseGlob("web/tmpl/partials/*.gohtml"))
 
-	return &TemplateService{
+	return TemplateService{
 		templates:       templates,
 		recaptchaPublic: recaptchaPublic,
 	}
