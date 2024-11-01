@@ -6,19 +6,14 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"url-shortener/internal/domain/entity"
+	"url-shortener/internal/domain/repository/url"
 )
-
-type UrlRepository interface {
-	Create(url *entity.Url) (primitive.ObjectID, error)
-	GetByID(id string) (*entity.Url, error)
-	GetByShortUrl(url string) (*entity.Url, error)
-}
 
 type mongoUrlRepository struct {
 	collection *mongo.Collection
 }
 
-func NewMongoUrlRepository(db *mongo.Database) UrlRepository {
+func NewMongoUrlRepository(db *mongo.Database) repository.UrlRepository {
 	return &mongoUrlRepository{
 		collection: db.Collection("urls"),
 	}

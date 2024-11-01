@@ -5,15 +5,15 @@ import (
 	"url-shortener/pkg"
 )
 
-type HashUsecase struct {
+type hashUsecaseImpl struct {
 	node *snowflake.Node
 }
 
 func NewHashUsecase(node *snowflake.Node) HashUsecase {
-	return HashUsecase{node: node}
+	return &hashUsecaseImpl{node: node}
 }
 
-func (s *HashUsecase) GenerateHash() string {
+func (s *hashUsecaseImpl) GenerateHash() string {
 	id := s.node.Generate().Int64()
 	return pkg.Base10ToBase62(id)
 }

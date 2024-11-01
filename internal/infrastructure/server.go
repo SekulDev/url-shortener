@@ -7,8 +7,13 @@ import (
 	"os"
 	"strconv"
 	"url-shortener/internal/app/service"
-	"url-shortener/internal/app/usecase"
-	"url-shortener/internal/domain/repository"
+	urlS "url-shortener/internal/app/service/url"
+	hashU "url-shortener/internal/app/usecase/hash"
+	ratelimitU "url-shortener/internal/app/usecase/ratelimit"
+	recaptchaU "url-shortener/internal/app/usecase/recaptcha"
+	urlU "url-shortener/internal/app/usecase/url"
+	repository "url-shortener/internal/domain/repository/url"
+	mongoRepository "url-shortener/internal/domain/repository/url/mongo"
 	mongoDb "url-shortener/internal/infrastructure/database/mongo"
 	redisDb "url-shortener/internal/infrastructure/database/redis"
 	"url-shortener/pkg"
@@ -24,20 +29,20 @@ type Repositories struct {
 }
 
 type Usecases struct {
-	HashUsecase      usecase.HashUsecase
-	UrlUsecase       usecase.UrlUsecase
-	RateLimitUsecase usecase.RateLimitUsecase
-	RecaptchaUsecase usecase.RecaptchaUsecase
+	HashUsecase      hashU.HashUsecase
+	UrlUsecase       urlU.UrlUsecase
+	RateLimitUsecase ratelimitU.RatelimitUsecase
+	RecaptchaUsecase recaptchaU.RecaptchaUsecase
 }
 
 type Services struct {
 	TemplateService service.TemplateService
-	UrlService      service.UrlService
+	UrlService      urlS.UrlService
 }
 
 type Server struct {
 	Mongo        *mongoDb.MongoClient
-	Redis        *redisDb.RedisClient
+	Redis        redisDb.Redis
 	Repositories *Repositories
 	Usecases     *Usecases
 	Services     *Services
@@ -83,17 +88,17 @@ func NewServer() *Server {
 	node := pkg.InitSnowflakeNode(snowflakeID)
 
 	// repositories
-	urlRepository := repository.NewMongoUrlRepository(mongoClient.GetDatabase())
+	urlRepository := mongoRepository.NewMongoUrlRepository(mongoClient.GetDatabase())
 
 	// usecases
-	hashUsecase := usecase.NewHashUsecase(node)
-	urlUsecase := usecase.NewUrlUsecase(urlRepository, redisClient)
-	rateLimitUsecase := usecase.NewRateLimitUsecase(redisClient)
-	recaptchaUsecase := usecase.NewRecaptchaUsecase(recaptchaObj)
+	hashUsecase := hashU.NewHashUsecase(node)
+	urlUsecase := urlU.NewUrlUsecase(urlRepository, redisClient)
+	rateLimitUsecase := ratelimitU.NewRateLimitUsecase(redisClient)
+	recaptchaUsecase := recaptchaU.NewRecaptchaUsecase(recaptchaObj)
 
 	// services
 	templateService := service.NewTemplateService(recaptchaKeys.Public)
-	urlService := service.NewUrlService(urlUsecase, hashUsecase, rateLimitUsecase, recaptchaUsecase)
+	urlService := urlS.NewUrlService(urlUsecase, hashUsecase, rateLimitUsecase, recaptchaUsecase)
 
 	server := &Server{
 		Mongo: mongoClient,

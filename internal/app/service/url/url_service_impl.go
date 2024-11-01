@@ -1,25 +1,23 @@
 package service
 
 import (
-	"url-shortener/internal/app/usecase"
+	hashU "url-shortener/internal/app/usecase/hash"
+	ratelimitU "url-shortener/internal/app/usecase/ratelimit"
+	recaptchaU "url-shortener/internal/app/usecase/recaptcha"
+	urlU "url-shortener/internal/app/usecase/url"
 	"url-shortener/internal/domain/apperrors"
 	"url-shortener/internal/domain/entity"
 	"url-shortener/pkg"
 )
 
-type UrlService interface {
-	ResolveShortUrl(url string) (*entity.Url, error)
-	AddUrl(longUrl string, ip string, recaptchaToken string) (*entity.Url, error)
-}
-
 type urlServiceImpl struct {
-	usecase          usecase.UrlUsecase
-	hashUsecase      usecase.HashUsecase
-	rateLimitUsecase usecase.RateLimitUsecase
-	recaptchaUsecase usecase.RecaptchaUsecase
+	usecase          urlU.UrlUsecase
+	hashUsecase      hashU.HashUsecase
+	rateLimitUsecase ratelimitU.RatelimitUsecase
+	recaptchaUsecase recaptchaU.RecaptchaUsecase
 }
 
-func NewUrlService(u usecase.UrlUsecase, h usecase.HashUsecase, rl usecase.RateLimitUsecase, r usecase.RecaptchaUsecase) UrlService {
+func NewUrlService(u urlU.UrlUsecase, h hashU.HashUsecase, rl ratelimitU.RatelimitUsecase, r recaptchaU.RecaptchaUsecase) UrlService {
 	return &urlServiceImpl{
 		usecase:          u,
 		hashUsecase:      h,

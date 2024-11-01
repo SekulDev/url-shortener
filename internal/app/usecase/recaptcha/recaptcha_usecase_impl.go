@@ -2,10 +2,6 @@ package usecase
 
 import "github.com/xinguang/go-recaptcha"
 
-type RecaptchaUsecase interface {
-	Verify(token string) error
-}
-
 type recaptchaUsecaseImpl struct {
 	recaptcha *recaptcha.ReCAPTCHA
 }
