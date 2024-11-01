@@ -81,7 +81,9 @@ docker compose -f ./docker-compose.dev.yaml --env-file ./config/.env.dev up
 
 ## Project status
 
-In the project there are areas for improvement:
+**⚠️ Note:** As the only one developer, I opted to commit directly to main, as implementing a more complex branching strategy wouldn't provide significant benefits for a project of this size.
+
+In the project there are some areas for improvement:
 
 -   Additional test coverage needed
 -   Code refactoring in specific areas
