@@ -13,7 +13,7 @@ func TestMongoUrlRepository_Create(t *testing.T) {
 	mt := mtest.New(t, mtest.NewOptions().ClientType(mtest.Mock))
 
 	mt.Run("Create a new URL", func(mt *mtest.T) {
-		repo := &MongoUrlRepository{collection: mt.Coll}
+		repo := &mongoUrlRepository{collection: mt.Coll}
 
 		urlEntity := &entity.Url{
 			LongUrl: "https://example.com",
@@ -36,7 +36,7 @@ func TestMongoUrlRepository_GetByID(t *testing.T) {
 	mt := mtest.New(t, mtest.NewOptions().ClientType(mtest.Mock))
 
 	mt.Run("Get URL by ID", func(mt *mtest.T) {
-		repo := &MongoUrlRepository{collection: mt.Coll}
+		repo := &mongoUrlRepository{collection: mt.Coll}
 
 		// Creating a mock ObjectID and URL entity
 		mockID := primitive.NewObjectID()
@@ -73,7 +73,7 @@ func TestMongoUrlRepository_GetByShortUrl(t *testing.T) {
 	mt := mtest.New(t, mtest.NewOptions().ClientType(mtest.Mock))
 
 	mt.Run("Get URL by Short URL", func(mt *mtest.T) {
-		repo := &MongoUrlRepository{collection: mt.Coll}
+		repo := &mongoUrlRepository{collection: mt.Coll}
 
 		// Creating a mock ObjectID and URL entity
 		mockID := primitive.NewObjectID()
