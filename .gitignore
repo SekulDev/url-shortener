@@ -6,4 +6,4 @@
 .env.prod
 
 web/node_modules
-/web/static/tailwind.css
+web/static/tailwind.css

@@ -2,8 +2,6 @@
 
 FROM node:20
 
-ARG HTTP_PORT=8080
-
 WORKDIR /app
 
 COPY web/package.json ./web/
@@ -13,6 +11,8 @@ RUN cd web && npm install
 RUN cd web && npm run build
 
 FROM golang:1.22
+
+ARG HTTP_PORT=8080
 
 WORKDIR /app
 
