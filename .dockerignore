@@ -1,0 +1,15 @@
+.dockerignore
+.gitignore
+
+.env.dev
+.env
+config/.env.dev.example
+config/.env
+
+Dockerfile
+docker-compose.dev.yaml
+docker-compose.prod.yaml
+
+web/static/tailwind.css
+
+node_modules

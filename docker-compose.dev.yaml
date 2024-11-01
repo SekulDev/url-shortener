@@ -1,0 +1,111 @@
+services:
+  mongo-primary:
+    image: mongo
+    container_name: mongo-primary
+    environment:
+      - MONGO_REPLICA_SET_NAME=rs0
+    volumes:
+      - mongo-primary-data:/data/db
+    networks:
+      - url-shortener
+    command: >
+      mongod --replSet rs0 --bind_ip_all --noauth
+    ports:
+      - "27017:27017"
+
+  mongo-secondary1:
+    image: mongo
+    container_name: mongo-secondary1
+    environment:
+      - MONGO_REPLICA_SET_NAME=rs0
+    volumes:
+      - mongo-secondary1-data:/data/db
+    networks:
+      - url-shortener
+    command: >
+      mongod --replSet rs0 --bind_ip_all --noauth
+
+  mongo-secondary2:
+    image: mongo
+    container_name: mongo-secondary2
+    environment:
+      - MONGO_REPLICA_SET_NAME=rs0
+    volumes:
+      - mongo-secondary2-data:/data/db
+    networks:
+      - url-shortener
+    command: >
+      mongod --replSet rs0 --bind_ip_all --noauth
+
+  mongo-setup:
+    image: mongo
+    container_name: mongo-setup
+    depends_on:
+      - mongo-primary
+      - mongo-secondary1
+      - mongo-secondary2
+    networks:
+      - url-shortener
+    environment:
+      - MONGO_DB_NAME=${MONGO_DATABASE}
+    entrypoint: >
+      /bin/sh -c "
+      sleep 5;
+      echo 'Initializing replica set...';
+      mongosh --host mongo-primary --eval '
+        rs.initiate({
+          _id: \"rs0\",
+          members: [
+            { _id: 0, host: \"mongo-primary:27017\" },
+            { _id: 1, host: \"mongo-secondary1:27017\" },
+            { _id: 2, host: \"mongo-secondary2:27017\" }
+          ]
+        })
+      ';
+      "
+
+  redis:
+    container_name: redis
+    image: bitnami/redis:7.4.1
+    restart: always
+    ports:
+      - '6379:6379'
+    environment:
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+    networks:
+      - url-shortener
+    volumes:
+      - redis:/bitnami/redis/data
+
+  url-shortener:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    networks:
+      - url-shortener
+    environment:
+      - HTTP_PORT=${HTTP_PORT}
+      - REDIS_URL=redis:6379
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+      - MONGO_URL=mongodb://mongo-primary:27017,mongo-secondary1:27017,mongo-secondary2:27017/${MONGO_DATABASE}?replicaSet=rs0&readPreference=secondaryPreferred
+      - MONGO_DATABASE=${MONGO_DATABASE}
+      - RECAPTCHA_PUBLIC=${RECAPTCHA_PUBLIC}
+      - RECAPTCHA_SECRET=${RECAPTCHA_SECRET}
+      - SNOWFLAKE_NODE_ID=${SNOWFLAKE_NODE_ID}
+    ports:
+      - "${HTTP_PORT}:${HTTP_PORT}"
+    depends_on:
+      - redis
+      - mongo-primary
+      - mongo-secondary1
+      - mongo-secondary2
+      - mongo-setup
+
+volumes:
+  mongo-primary-data:
+  mongo-secondary1-data:
+  mongo-secondary2-data:
+  redis:
+
+networks:
+  url-shortener:
