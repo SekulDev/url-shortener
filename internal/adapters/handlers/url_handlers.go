@@ -5,14 +5,15 @@ import (
 	"net/http"
 	"url-shortener/internal/adapters/middleware"
 	"url-shortener/internal/app/service"
+	urlS "url-shortener/internal/app/service/url"
 )
 
 type UrlHandlers struct {
-	urlService      service.UrlService
+	urlService      urlS.UrlService
 	templateService service.TemplateService
 }
 
-func NewUrlHandlers(urlService service.UrlService, templateService service.TemplateService) *UrlHandlers {
+func NewUrlHandlers(urlService urlS.UrlService, templateService service.TemplateService) *UrlHandlers {
 	return &UrlHandlers{
 		urlService:      urlService,
 		templateService: templateService,
