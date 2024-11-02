@@ -1,20 +1,27 @@
 # syntax=docker/dockerfile:1
 
-FROM node:20
+FROM node:20 AS tailwind
 
 WORKDIR /app
 
 COPY web/package.json ./web/
 COPY web/package-lock.json ./web/
 
-RUN cd web && npm install
-RUN cd web && npm run build
+WORKDIR /app/web
+
+RUN npm install
+
+COPY web ./
+
+RUN npm run build
 
 FROM golang:1.22
 
 ARG HTTP_PORT=8080
 
 WORKDIR /app
+
+COPY --from=tailwind /app/web/static ./web/static
 
 COPY go.mod go.sum ./
 
