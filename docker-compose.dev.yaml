@@ -78,6 +78,7 @@ services:
       - redis:/bitnami/redis/data
 
   url-shortener:
+    container_name: url-shortener
     build:
       context: .
       dockerfile: Dockerfile
@@ -100,6 +101,19 @@ services:
       - mongo-secondary1
       - mongo-secondary2
       - mongo-setup
+
+  nginx:
+    container_name: nginx
+    build:
+      context: './config/nginx'
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      - url-shortener
+    depends_on:
+      - url-shortener
 
 volumes:
   mongo-primary-data:
