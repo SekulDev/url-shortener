@@ -85,7 +85,7 @@ docker compose -f ./docker-compose.dev.yaml --env-file ./config/.env.dev up
 
 In the project there are some areas for improvement:
 
--   Additional test coverage needed
+-   Missing integrational / E2E tests, some unit tests are need improvement
 -   Code refactoring in specific areas
 -   Documentation improvements
 
