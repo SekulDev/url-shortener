@@ -13,9 +13,9 @@ import (
 	recaptchaU "url-shortener/internal/app/usecase/recaptcha"
 	urlU "url-shortener/internal/app/usecase/url"
 	repository "url-shortener/internal/domain/repository/url"
-	mongoRepository "url-shortener/internal/domain/repository/url/mongo"
 	mongoDb "url-shortener/internal/infrastructure/database/mongo"
 	redisDb "url-shortener/internal/infrastructure/database/redis"
+	mongoRepository "url-shortener/internal/infrastructure/repository/url/mongo"
 	"url-shortener/pkg"
 )
 
